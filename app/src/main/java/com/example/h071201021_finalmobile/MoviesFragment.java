@@ -22,6 +22,8 @@ import com.example.h071201021_finalmobile.data.model.Movie;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -35,7 +37,7 @@ public class MoviesFragment extends Fragment {
     private static final String API_KEY = "2e626bcae95608ffd595f9111601e798";
     ProgressBar progressBar;
     TextView tvAlert;
-    ImageView btnRefresh;
+    ImageView btnRefresh, sortIv;
     private TextInputLayout tfSearch;
 
     private RecyclerView recyclerView;
@@ -55,10 +57,11 @@ public class MoviesFragment extends Fragment {
         btnRefresh = view.findViewById(R.id.btn_refresh);
         recyclerView = view.findViewById(R.id.recyclerView);
         tfSearch = view.findViewById(R.id.tf_search);
+        sortIv = view.findViewById(R.id.sort_iv);
+
+
 
         showLoading();
-
-
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -98,6 +101,15 @@ public class MoviesFragment extends Fragment {
                             performSearch(s.toString(), movies);
                         }
                     });
+
+                    sortIv.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // Call the sortMovies method here
+                            sortMovies(movies);
+                        }
+                    });
+
                 } else {
                     showAlert();
                     Toast.makeText(getActivity(), "Error: " + response.code(), Toast.LENGTH_SHORT).show();
@@ -123,6 +135,21 @@ public class MoviesFragment extends Fragment {
         }
         movieAdapter.setMovies(searchMovie);
     }
+
+    private void sortMovies(List<Movie> movies) {
+        // Sort the movies list based on your desired sorting logic
+        // For example, sorting by title in ascending order
+        Collections.sort(movies, new Comparator<Movie>() {
+            @Override
+            public int compare(Movie movie1, Movie movie2) {
+                return movie1.getTitle().compareToIgnoreCase(movie2.getTitle());
+            }
+        });
+
+        // Update the adapter with the sorted movies list
+        movieAdapter.setMovies(movies);
+    }
+
     private void showLoading() {
         progressBar.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.INVISIBLE);
@@ -135,6 +162,8 @@ public class MoviesFragment extends Fragment {
         recyclerView.setVisibility(View.VISIBLE);
         tvAlert.setVisibility(View.INVISIBLE);
         btnRefresh.setVisibility(View.INVISIBLE);
+        sortIv.setVisibility(View.VISIBLE);
+        tfSearch.setVisibility(View.VISIBLE);
     }
 
     private void showAlert() {
@@ -142,5 +171,7 @@ public class MoviesFragment extends Fragment {
         btnRefresh.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.INVISIBLE);
         recyclerView.setVisibility(View.INVISIBLE);
+        sortIv.setVisibility(View.GONE);
+        tfSearch.setVisibility(View.GONE);
     }
 }

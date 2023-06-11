@@ -24,6 +24,8 @@ import com.example.h071201021_finalmobile.data.model.TvShowResponse;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -37,7 +39,7 @@ public class TvShowFragment extends Fragment {
     private static final String API_KEY = "2e626bcae95608ffd595f9111601e798";
     ProgressBar progressBar;
     TextView tvAlert;
-    ImageView btnRefresh;
+    ImageView btnRefresh, sortIv;
     private TextInputLayout tfSearch;
 
     private RecyclerView recyclerView;
@@ -57,6 +59,7 @@ public class TvShowFragment extends Fragment {
         btnRefresh = view.findViewById(R.id.btn_refresh);
         recyclerView = view.findViewById(R.id.rv_tv_shows);
         tfSearch = view.findViewById(R.id.tf_search);
+        sortIv = view.findViewById(R.id.sort_iv);
 
         showLoading();
         Retrofit retrofit = new Retrofit.Builder()
@@ -97,6 +100,15 @@ public class TvShowFragment extends Fragment {
                             performSearch(s.toString(), tvShow);
                         }
                     });
+
+                    sortIv.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // Call the sortMovies method here
+                            sortTvShow(tvShow);
+                        }
+                    });
+
                 } else {
                     showAlert();
                     Toast.makeText(getActivity(), "Error: " + response.code(), Toast.LENGTH_SHORT).show();
@@ -122,6 +134,19 @@ public class TvShowFragment extends Fragment {
         tvAdapter.setTvShows(searchTvShow);
     }
 
+    private void sortTvShow(List<TvShow> tvshows) {
+        // Sort the movies list based on your desired sorting logic
+        // For example, sorting by title in ascending order
+        Collections.sort(tvshows, new Comparator<TvShow>() {
+            @Override
+            public int compare(TvShow tvshow1, TvShow tvshow2) {
+                return tvshow1.getName().compareToIgnoreCase(tvshow2.getName());
+            }
+        });
+
+        // Update the adapter with the sorted movies list
+        tvAdapter.setTvShows(tvshows);
+    }
     private void showLoading() {
         progressBar.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.INVISIBLE);
@@ -134,6 +159,7 @@ public class TvShowFragment extends Fragment {
         recyclerView.setVisibility(View.VISIBLE);
         tvAlert.setVisibility(View.INVISIBLE);
         btnRefresh.setVisibility(View.INVISIBLE);
+        sortIv.setVisibility(View.VISIBLE);
         tfSearch.setVisibility(View.VISIBLE);
     }
 
@@ -142,6 +168,7 @@ public class TvShowFragment extends Fragment {
         btnRefresh.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.INVISIBLE);
         recyclerView.setVisibility(View.INVISIBLE);
+        sortIv.setVisibility(View.GONE);
         tfSearch.setVisibility(View.GONE);
     }
 }

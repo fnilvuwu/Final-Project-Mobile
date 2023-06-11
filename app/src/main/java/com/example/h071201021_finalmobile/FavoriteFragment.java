@@ -14,23 +14,29 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.h071201021_finalmobile.data.model.Favorite;
+import com.example.h071201021_finalmobile.data.model.Movie;
 import com.example.h071201021_finalmobile.data.model.TvShow;
 import com.example.h071201021_finalmobile.database.DatabaseHelper;
 import com.example.h071201021_finalmobile.database.MovieContract;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class FavoriteFragment extends Fragment {
     RecyclerView recyclerView;
     List<Favorite> favoriteList;
     ProgressBar progressBar;
+    ImageView sortIv;
+
     private TextInputLayout tfSearch;
     TextView tvError;
     FavoriteAdapter favoriteAdapter;
@@ -46,6 +52,7 @@ public class FavoriteFragment extends Fragment {
         progressBar = view.findViewById(R.id.progress_bar);
         tvError = view.findViewById(R.id.tv_error);
         tfSearch = view.findViewById(R.id.tf_search);
+        sortIv = view.findViewById(R.id.sort_iv);
 
         hideLoading();
         favoriteList = getAllMoviesFromDatabase();
@@ -70,6 +77,14 @@ public class FavoriteFragment extends Fragment {
             public void afterTextChanged(Editable s) {
                 // Do nothing
                 performSearch(s.toString(), favoriteList);
+            }
+        });
+
+        sortIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Call the sortFavorite method here
+                sortFavorite(favoriteList);
             }
         });
     }
@@ -110,9 +125,11 @@ public class FavoriteFragment extends Fragment {
 
         if (favoriteList.isEmpty()) {
             tvError.setVisibility(View.VISIBLE);
+            sortIv.setVisibility(View.GONE);
             tfSearch.setVisibility(View.GONE);
         } else {
             tvError.setVisibility(View.GONE);
+            sortIv.setVisibility(View.VISIBLE);
             tfSearch.setVisibility(View.VISIBLE);
         }
 
@@ -131,6 +148,20 @@ public class FavoriteFragment extends Fragment {
             }
         }
         favoriteAdapter.setFavorite(searchFavorite);
+    }
+
+    private void sortFavorite(List<Favorite> favorites) {
+        // Sort the movies list based on your desired sorting logic
+        // For example, sorting by title in ascending order
+        Collections.sort(favorites, new Comparator<Favorite>() {
+            @Override
+            public int compare(Favorite favorite1, Favorite favorite2) {
+                return favorite1.getTitle().compareToIgnoreCase(favorite2.getTitle());
+            }
+        });
+
+        // Update the adapter with the sorted movies list
+        favoriteAdapter.setFavorite(favorites);
     }
 
     private void showLoading() {
