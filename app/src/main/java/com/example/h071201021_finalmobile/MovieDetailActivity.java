@@ -27,7 +27,6 @@ import java.util.Locale;
 public class MovieDetailActivity extends AppCompatActivity {
     // menambahkan tipe di favorite : itemshow/movie
 
-    // please check your internet connection kalau tidak ada jaringan
     // refresh pas pencet bottom navbar
     // favorite harus offline, gambar termasuk offline
 

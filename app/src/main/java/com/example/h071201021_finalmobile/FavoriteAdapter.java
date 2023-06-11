@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.h071201021_finalmobile.data.model.Favorite;
+import com.example.h071201021_finalmobile.data.model.TvShow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,11 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
 
     public FavoriteAdapter(List<Favorite> favorites) {
         this.favorites = favorites;
+    }
+
+    public void setFavorite(List<Favorite> favorites) {
+        this.favorites = favorites;
+        notifyDataSetChanged();
     }
     public interface ClickListener {
         void onUserClicked(Favorite favoriteResponse);

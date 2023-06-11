@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.h071201021_finalmobile.data.model.Movie;
 import com.example.h071201021_finalmobile.data.model.TvShow;
 import com.example.h071201021_finalmobile.data.model.TvShowResponse;
 
@@ -24,6 +25,11 @@ public class TvShowAdapter extends RecyclerView.Adapter<TvShowAdapter.TvViewHold
 
     public TvShowAdapter(List<TvShow> tvShows) {
         this.tvShows = tvShows;
+    }
+
+    public void setTvShows(List<TvShow> tvShows) {
+        this.tvShows = tvShows;
+        notifyDataSetChanged();
     }
 
     public interface ClickListener {

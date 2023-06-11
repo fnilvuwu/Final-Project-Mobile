@@ -9,15 +9,20 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.h071201021_finalmobile.data.model.Favorite;
+import com.example.h071201021_finalmobile.data.model.TvShow;
 import com.example.h071201021_finalmobile.database.DatabaseHelper;
 import com.example.h071201021_finalmobile.database.MovieContract;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +31,8 @@ public class FavoriteFragment extends Fragment {
     RecyclerView recyclerView;
     List<Favorite> favoriteList;
     ProgressBar progressBar;
+    private TextInputLayout tfSearch;
+    TextView tvError;
     FavoriteAdapter favoriteAdapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,12 +44,34 @@ public class FavoriteFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         progressBar = view.findViewById(R.id.progress_bar);
+        tvError = view.findViewById(R.id.tv_error);
+        tfSearch = view.findViewById(R.id.tf_search);
+
         hideLoading();
         favoriteList = getAllMoviesFromDatabase();
         recyclerView = view.findViewById(R.id.rv_favorites);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         favoriteAdapter = new FavoriteAdapter(favoriteList);
         recyclerView.setAdapter(favoriteAdapter);
+
+        tfSearch.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Do nothing
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Call the searchNotes method with the new search keyword
+                performSearch(s.toString(), favoriteList);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // Do nothing
+                performSearch(s.toString(), favoriteList);
+            }
+        });
     }
 
     public void refreshFavorites() {
@@ -79,11 +108,29 @@ public class FavoriteFragment extends Fragment {
 
         }
 
+        if (favoriteList.isEmpty()) {
+            tvError.setVisibility(View.VISIBLE);
+            tfSearch.setVisibility(View.GONE);
+        } else {
+            tvError.setVisibility(View.GONE);
+            tfSearch.setVisibility(View.VISIBLE);
+        }
+
         if (cursor != null) {
             cursor.close();
         }
 
         return favoriteList;
+    }
+
+    private void performSearch(String searchQuery, List<Favorite> favorites) {
+        List<Favorite> searchFavorite = new ArrayList<>();
+        for (int i = 0; i < favorites.size(); i++) {
+            if (favorites.get(i).getTitle().toLowerCase().contains(searchQuery.toLowerCase())) {
+                searchFavorite.add(favorites.get(i));
+            }
+        }
+        favoriteAdapter.setFavorite(searchFavorite);
     }
 
     private void showLoading() {

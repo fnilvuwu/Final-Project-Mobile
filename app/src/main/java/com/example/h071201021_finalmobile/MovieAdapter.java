@@ -27,6 +27,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     public MovieAdapter(List<Movie> movies) {
         this.movies = movies;
     }
+    public void setMovies(List<Movie> movies) {
+        this.movies = movies;
+        notifyDataSetChanged();
+    }
+
     public interface ClickListener {
         void onUserClicked(MovieResponse movieResponse);
     }

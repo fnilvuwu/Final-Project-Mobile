@@ -6,6 +6,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +19,9 @@ import android.widget.Toast;
 import com.example.h071201021_finalmobile.data.MovieService;
 import com.example.h071201021_finalmobile.data.model.MovieResponse;
 import com.example.h071201021_finalmobile.data.model.Movie;
+import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -32,6 +36,8 @@ public class MoviesFragment extends Fragment {
     ProgressBar progressBar;
     TextView tvAlert;
     ImageView btnRefresh;
+    private TextInputLayout tfSearch;
+
     private RecyclerView recyclerView;
     private MovieAdapter movieAdapter;
     public MoviesFragment() {
@@ -48,7 +54,12 @@ public class MoviesFragment extends Fragment {
         tvAlert = view.findViewById(R.id.tv_alert);
         btnRefresh = view.findViewById(R.id.btn_refresh);
         recyclerView = view.findViewById(R.id.recyclerView);
+        tfSearch = view.findViewById(R.id.tf_search);
+
         showLoading();
+
+
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -68,6 +79,25 @@ public class MoviesFragment extends Fragment {
                     movieAdapter = new MovieAdapter(movies);
                     recyclerView.setAdapter(movieAdapter);
                     recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+
+                    tfSearch.getEditText().addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                            // Do nothing
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            // Call the searchNotes method with the new search keyword
+                            performSearch(s.toString(), movies);
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            // Do nothing
+                            performSearch(s.toString(), movies);
+                        }
+                    });
                 } else {
                     showAlert();
                     Toast.makeText(getActivity(), "Error: " + response.code(), Toast.LENGTH_SHORT).show();
@@ -84,6 +114,15 @@ public class MoviesFragment extends Fragment {
         return view;
     }
 
+    private void performSearch(String searchQuery, List<Movie> movies) {
+        List<Movie> searchMovie = new ArrayList<>();
+        for (int i = 0; i < movies.size(); i++) {
+            if (movies.get(i).getTitle().toLowerCase().contains(searchQuery.toLowerCase())) {
+                searchMovie.add(movies.get(i));
+            }
+        }
+        movieAdapter.setMovies(searchMovie);
+    }
     private void showLoading() {
         progressBar.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.INVISIBLE);

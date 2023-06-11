@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +18,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.h071201021_finalmobile.data.TvShowService;
+import com.example.h071201021_finalmobile.data.model.Movie;
 import com.example.h071201021_finalmobile.data.model.TvShow;
 import com.example.h071201021_finalmobile.data.model.TvShowResponse;
+import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -33,6 +38,8 @@ public class TvShowFragment extends Fragment {
     ProgressBar progressBar;
     TextView tvAlert;
     ImageView btnRefresh;
+    private TextInputLayout tfSearch;
+
     private RecyclerView recyclerView;
     private TvShowAdapter tvAdapter;
 
@@ -49,6 +56,7 @@ public class TvShowFragment extends Fragment {
         tvAlert = view.findViewById(R.id.tv_alert);
         btnRefresh = view.findViewById(R.id.btn_refresh);
         recyclerView = view.findViewById(R.id.rv_tv_shows);
+        tfSearch = view.findViewById(R.id.tf_search);
 
         showLoading();
         Retrofit retrofit = new Retrofit.Builder()
@@ -70,6 +78,25 @@ public class TvShowFragment extends Fragment {
                     tvAdapter = new TvShowAdapter(tvShow);
                     recyclerView.setAdapter(tvAdapter);
                     recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+
+                    tfSearch.getEditText().addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                            // Do nothing
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            // Call the searchNotes method with the new search keyword
+                            performSearch(s.toString(), tvShow);
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            // Do nothing
+                            performSearch(s.toString(), tvShow);
+                        }
+                    });
                 } else {
                     showAlert();
                     Toast.makeText(getActivity(), "Error: " + response.code(), Toast.LENGTH_SHORT).show();
@@ -85,6 +112,16 @@ public class TvShowFragment extends Fragment {
         return view;
     }
 
+    private void performSearch(String searchQuery, List<TvShow> tvShows) {
+        List<TvShow> searchTvShow = new ArrayList<>();
+        for (int i = 0; i < tvShows.size(); i++) {
+            if (tvShows.get(i).getName().toLowerCase().contains(searchQuery.toLowerCase())) {
+                searchTvShow.add(tvShows.get(i));
+            }
+        }
+        tvAdapter.setTvShows(searchTvShow);
+    }
+
     private void showLoading() {
         progressBar.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.INVISIBLE);
@@ -97,6 +134,7 @@ public class TvShowFragment extends Fragment {
         recyclerView.setVisibility(View.VISIBLE);
         tvAlert.setVisibility(View.INVISIBLE);
         btnRefresh.setVisibility(View.INVISIBLE);
+        tfSearch.setVisibility(View.VISIBLE);
     }
 
     private void showAlert() {
@@ -104,5 +142,6 @@ public class TvShowFragment extends Fragment {
         btnRefresh.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.INVISIBLE);
         recyclerView.setVisibility(View.INVISIBLE);
+        tfSearch.setVisibility(View.GONE);
     }
 }
