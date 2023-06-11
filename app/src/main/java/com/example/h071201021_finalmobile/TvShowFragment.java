@@ -77,6 +77,7 @@ public class TvShowFragment extends Fragment {
             }
             @Override
             public void onFailure(Call<TvShowResponse> call, Throwable t) {
+                showAlert();
                 Toast.makeText(getActivity(), "Failure: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

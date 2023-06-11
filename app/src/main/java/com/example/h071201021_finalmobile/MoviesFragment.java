@@ -76,6 +76,7 @@ public class MoviesFragment extends Fragment {
 
             @Override
             public void onFailure(Call<MovieResponse> call, Throwable t) {
+                showAlert();
                 Toast.makeText(getActivity(), "Failure: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

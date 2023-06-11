@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,12 +21,11 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class MovieDetailActivity extends AppCompatActivity {
-    // to do list memisahkan antara tvshow dan movie, icon movie menggunakan icon film, tv show menggunakan icon tvshow
-
-    // membuat item layout untuk favorites
+    // menambahkan tipe di favorite : itemshow/movie
 
     // please check your internet connection kalau tidak ada jaringan
     // refresh pas pencet bottom navbar
@@ -34,8 +34,6 @@ public class MovieDetailActivity extends AppCompatActivity {
     private DatabaseHelper dbHelper;
     private ImageView backdropImageView, backButton, favoriteButton, posterImageView, typeImageView;
     private TextView titleTextView, releaseDateTextView, ratingTextView, synopsisTextView;
-    private boolean isFavorite = false;
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
@@ -150,7 +148,19 @@ public class MovieDetailActivity extends AppCompatActivity {
             String posterUrl = "https://image.tmdb.org/t/p/w300_and_h450_bestv2/" + favorite.getPosterPath();
             String backdropUrl = "https://image.tmdb.org/t/p/w300_and_h450_bestv2/" + favorite.getBackdropUrl();
             titleTextView.setText(favorite.getTitle());
-            releaseDateTextView.setText(favorite.getReleaseDate());
+            favoriteButton.setImageResource(R.drawable.baseline_favorite_24);
+
+            // Original date string
+            String originalDate = favorite.getReleaseDate();
+
+            // Parse the original date string into a Date object
+            Date date = parseDate(originalDate, "yyyy-MM-dd");
+
+            // Format the date using the desired format
+            String formattedDate = formatDate(date, "MMMM d, yyyy");
+
+            // Set the new date
+            releaseDateTextView.setText(formattedDate);
 
             ratingTextView.setText(favorite.getVoteAverage().toString());
             Glide.with(this)
@@ -178,6 +188,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
     }
 
+    private boolean isFavorite = false;
+
     private void addMovieToFavorites(int id, String overview, String posterUrl, String releaseDate, String title, double voteAverage, String backdropUrl) {
         Movie movie = new Movie(id, overview, posterUrl, releaseDate, title, voteAverage, backdropUrl);
         long result = dbHelper.insertMovie(movie);
@@ -195,6 +207,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             Toast.makeText(this, "Failed to delete movie", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     private static Date parseDate(String dateStr, String format) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.ENGLISH);

@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.h071201021_finalmobile.data.model.Favorite;
 import com.example.h071201021_finalmobile.database.DatabaseHelper;
@@ -23,8 +24,9 @@ import java.util.List;
 
 public class FavoriteFragment extends Fragment {
     RecyclerView recyclerView;
+    List<Favorite> favoriteList;
     ProgressBar progressBar;
-
+    FavoriteAdapter favoriteAdapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -36,13 +38,16 @@ public class FavoriteFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         progressBar = view.findViewById(R.id.progress_bar);
         hideLoading();
-        List<Favorite> favoriteList = getAllMoviesFromDatabase();
+        favoriteList = getAllMoviesFromDatabase();
         recyclerView = view.findViewById(R.id.rv_favorites);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        FavoriteAdapter favoriteAdapter = new FavoriteAdapter(favoriteList);
+        favoriteAdapter = new FavoriteAdapter(favoriteList);
         recyclerView.setAdapter(favoriteAdapter);
     }
 
+    public void refreshFavorites() {
+        favoriteAdapter.notifyDataSetChanged();
+    }
     private List<Favorite> getAllMoviesFromDatabase() {
         List<Favorite> favoriteList = new ArrayList<>();
         DatabaseHelper movieHelper = new DatabaseHelper(getActivity());
@@ -60,11 +65,11 @@ public class FavoriteFragment extends Fragment {
 
             do {
                 int id = (idColumnIndex != -1) ? cursor.getInt(idColumnIndex) : -1;
-                String title = (titleColumnIndex != -1) ? cursor.getString(titleColumnIndex) : null;
-                String releaseDate = (releaseDateColumnIndex != -1) ? cursor.getString(releaseDateColumnIndex) : null;
-                String overview = (overviewColumnIndex != -1) ? cursor.getString(overviewColumnIndex) : null;
-                String posterUrl = (posterUrlColumnIndex != -1) ? cursor.getString(posterUrlColumnIndex) : null;
-                String backdropUrl = (backdropUrlColumnIndex != -1) ? cursor.getString(backdropUrlColumnIndex) : null;
+                String title = (titleColumnIndex != -1) ? cursor.getString(titleColumnIndex) : "-";
+                String releaseDate = (releaseDateColumnIndex != -1) ? cursor.getString(releaseDateColumnIndex) : "-";
+                String overview = (overviewColumnIndex != -1) ? cursor.getString(overviewColumnIndex) : "-";
+                String posterUrl = (posterUrlColumnIndex != -1) ? cursor.getString(posterUrlColumnIndex) : "-";
+                String backdropUrl = (backdropUrlColumnIndex != -1) ? cursor.getString(backdropUrlColumnIndex) : "-";
                 double voteAverage = (voteAverageColumnIndex != -1) ? cursor.getDouble(voteAverageColumnIndex) : 0.0;
 
                 // Create a Movie object and add it to the list

@@ -37,7 +37,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
     @Override
     public FavoriteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_movie, parent, false);
+                .inflate(R.layout.item_favorite, parent, false);
         return new FavoriteViewHolder(view);
     }
 
@@ -47,6 +47,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
         Favorite favorite = favorites.get(position);
         holder.setData(favorite, context);
     }
+
 
     @Override
     public int getItemCount() {
@@ -70,6 +71,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
             String year = favorite.getReleaseDate();
             String poster = favorite.getPosterPath();
             titleTextView.setText(title);
+            year = year.substring(0,4);
             yearTextView.setText(year);
             Glide.with(context)
                     .load(poster)
@@ -83,5 +85,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
                 }
             });
         }
+
+
     }
 }
