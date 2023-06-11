@@ -33,8 +33,11 @@ public class TvShow implements Parcelable {
     @SerializedName("vote_average")
     private final Double voteAverage;
 
+    @SerializedName("type") // New field for type
+    private final String type;
+
     public TvShow(String backdropUrl, String firstAirDate, List<Integer> genreIds, int id, String name, String overview,
-              String posterUrl, Double voteAverage) {
+                  String posterUrl, Double voteAverage, String type) { // Include type in the constructor
         this.backdropUrl = backdropUrl;
         this.firstAirDate = firstAirDate;
         this.genreIds = genreIds;
@@ -43,6 +46,7 @@ public class TvShow implements Parcelable {
         this.overview = overview;
         this.posterUrl = posterUrl;
         this.voteAverage = voteAverage;
+        this.type = type;
     }
 
     protected TvShow(Parcel in) {
@@ -55,6 +59,7 @@ public class TvShow implements Parcelable {
         overview = in.readString();
         posterUrl = in.readString();
         voteAverage = in.readDouble();
+        type = in.readString(); // Read type from the parcel
     }
 
     public static final Creator<TvShow> CREATOR = new Creator<TvShow>() {
@@ -101,6 +106,10 @@ public class TvShow implements Parcelable {
         return voteAverage;
     }
 
+    public String getType() {
+        return type;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -116,5 +125,6 @@ public class TvShow implements Parcelable {
         dest.writeString(overview);
         dest.writeString(posterUrl);
         dest.writeDouble(voteAverage);
+        dest.writeString(type); // Write type to the parcel
     }
 }

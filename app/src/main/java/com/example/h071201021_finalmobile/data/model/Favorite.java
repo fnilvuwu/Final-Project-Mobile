@@ -11,8 +11,9 @@ public class Favorite implements Parcelable {
     private final String title;
     private final Double voteAverage;
     private final String backdropUrl;
+    private final String type;
 
-    public Favorite(int id, String overview, String posterPath, String releaseDate, String title, Double voteAverage, String backdropUrl) {
+    public Favorite(int id, String overview, String posterPath, String releaseDate, String title, Double voteAverage, String backdropUrl, String type) {
         this.id = id;
         this.overview = overview;
         this.posterPath = posterPath;
@@ -20,6 +21,7 @@ public class Favorite implements Parcelable {
         this.title = title;
         this.voteAverage = voteAverage;
         this.backdropUrl = backdropUrl;
+        this.type = type;
     }
 
     protected Favorite(Parcel in) {
@@ -30,6 +32,7 @@ public class Favorite implements Parcelable {
         releaseDate = in.readString();
         title = in.readString();
         voteAverage = in.readDouble();
+        type = in.readString();
     }
 
     @Override
@@ -41,6 +44,7 @@ public class Favorite implements Parcelable {
         dest.writeString(releaseDate);
         dest.writeString(title);
         dest.writeDouble(voteAverage);
+        dest.writeString(type);
     }
 
     @Override
@@ -59,25 +63,36 @@ public class Favorite implements Parcelable {
             return new Favorite[size];
         }
     };
+
     public int getId() {
         return id;
     }
+
     public String getBackdropUrl() {
         return backdropUrl;
     }
+
     public String getOverview() {
         return overview;
     }
+
     public String getPosterPath() {
         return posterPath;
     }
+
     public String getReleaseDate() {
         return releaseDate;
     }
+
     public String getTitle() {
         return title;
     }
+
     public Double getVoteAverage() {
         return voteAverage;
+    }
+
+    public String getType() {
+        return type;
     }
 }

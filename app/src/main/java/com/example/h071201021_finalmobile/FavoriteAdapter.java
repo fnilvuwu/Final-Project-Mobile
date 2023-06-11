@@ -2,6 +2,7 @@ package com.example.h071201021_finalmobile;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
         this.favorites = favorites;
         notifyDataSetChanged();
     }
+
     public interface ClickListener {
         void onUserClicked(Favorite favoriteResponse);
     }
@@ -61,7 +63,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
     }
 
     static class FavoriteViewHolder extends RecyclerView.ViewHolder {
-        private ImageView posterImageView;
+        private ImageView posterImageView, ivType;
         private TextView titleTextView;
         private TextView yearTextView;
 
@@ -70,6 +72,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
             posterImageView = itemView.findViewById(R.id.iv_poster);
             titleTextView = itemView.findViewById(R.id.tv_title);
             yearTextView = itemView.findViewById(R.id.tv_year);
+            ivType = itemView.findViewById(R.id.iv_type);
         }
 
         public void setData(Favorite favorite, Context context) {
@@ -82,6 +85,14 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Favori
             Glide.with(context)
                     .load(poster)
                     .into(posterImageView);
+
+            if (favorite.getType().equals("movie")) {
+                ivType.setImageResource(R.drawable.baseline_movie_24);
+            }
+            else {
+                ivType.setImageResource(R.drawable.baseline_tv_24);
+            }
+
             this.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

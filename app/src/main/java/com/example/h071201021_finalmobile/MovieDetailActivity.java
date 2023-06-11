@@ -33,6 +33,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     private DatabaseHelper dbHelper;
     private ImageView backdropImageView, backButton, favoriteButton, posterImageView, typeImageView;
     private TextView titleTextView, releaseDateTextView, ratingTextView, synopsisTextView;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
@@ -46,7 +47,6 @@ public class MovieDetailActivity extends AppCompatActivity {
         ratingTextView = findViewById(R.id.tv_rating);
         typeImageView = findViewById(R.id.iv_type);
         synopsisTextView = findViewById(R.id.tv_synopsis);
-
         dbHelper = new DatabaseHelper(this);
 
         backButton.setOnClickListener(View -> {
@@ -89,7 +89,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                     if (!isFavorite) {
                         favoriteButton.setImageResource(R.drawable.baseline_favorite_24);
                         isFavorite = true;
-                        addMovieToFavorites(movie.getId(), movie.getOverview(), posterUrl, movie.getReleaseDate(), movie.getTitle(), movie.getVoteAverage(), backdropUrl);
+                        addMovieToFavorites(movie.getId(), movie.getOverview(), posterUrl, movie.getReleaseDate(), movie.getTitle(), movie.getVoteAverage(), backdropUrl, "movie");
                     } else {
                         favoriteButton.setImageResource(R.drawable.baseline_favorite_border_24);
                         isFavorite = false;
@@ -133,7 +133,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                     if (!isFavorite) {
                         favoriteButton.setImageResource(R.drawable.baseline_favorite_24);
                         isFavorite = true;
-                        addMovieToFavorites(show.getId(), show.getOverview(), posterUrl, show.getFirstAirDate(), show.getName(), show.getVoteAverage(), backdropUrl);
+                        addMovieToFavorites(show.getId(), show.getOverview(), posterUrl, show.getFirstAirDate(), show.getName(), show.getVoteAverage(), backdropUrl, "tvshow");
                     } else {
                         favoriteButton.setImageResource(R.drawable.baseline_favorite_border_24);
                         isFavorite = false;
@@ -141,8 +141,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                     }
                 }
             });
-        }
-        else {
+        } else {
             Favorite favorite = intent.getParcelableExtra("favorite");
             String posterUrl = "https://image.tmdb.org/t/p/w300_and_h450_bestv2/" + favorite.getPosterPath();
             String backdropUrl = "https://image.tmdb.org/t/p/w300_and_h450_bestv2/" + favorite.getBackdropUrl();
@@ -161,6 +160,13 @@ public class MovieDetailActivity extends AppCompatActivity {
             // Set the new date
             releaseDateTextView.setText(formattedDate);
 
+            if (favorite.getType().equals("movie")) {
+                typeImageView.setImageResource(R.drawable.baseline_movie_24);
+            }
+            else {
+                typeImageView.setImageResource(R.drawable.baseline_tv_24);
+            }
+
             ratingTextView.setText(favorite.getVoteAverage().toString());
             Glide.with(this)
                     .load(posterUrl)
@@ -176,7 +182,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                     if (!dbHelper.isMovieInFavorites(favorite.getTitle())) {
                         favoriteButton.setImageResource(R.drawable.baseline_favorite_24);
                         isFavorite = true;
-                        addMovieToFavorites(favorite.getId(), favorite.getOverview(), posterUrl, favorite.getTitle(), favorite.getTitle(), favorite.getVoteAverage(), backdropUrl);
+                        addMovieToFavorites(favorite.getId(), favorite.getOverview(), posterUrl, favorite.getTitle(), favorite.getTitle(), favorite.getVoteAverage(), backdropUrl, favorite.getType());
                     } else {
                         favoriteButton.setImageResource(R.drawable.baseline_favorite_border_24);
                         isFavorite = false;
@@ -189,8 +195,8 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     private boolean isFavorite = false;
 
-    private void addMovieToFavorites(int id, String overview, String posterUrl, String releaseDate, String title, double voteAverage, String backdropUrl) {
-        Movie movie = new Movie(id, overview, posterUrl, releaseDate, title, voteAverage, backdropUrl);
+    private void addMovieToFavorites(int id, String overview, String posterUrl, String releaseDate, String title, double voteAverage, String backdropUrl, String type) {
+        Movie movie = new Movie(id, overview, posterUrl, releaseDate, title, voteAverage, backdropUrl, type);
         long result = dbHelper.insertMovie(movie);
         if (result != -1) {
             Toast.makeText(this, "Movie added to favorites", Toast.LENGTH_SHORT).show();
@@ -198,6 +204,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             Toast.makeText(this, "Failed to add movie", Toast.LENGTH_SHORT).show();
         }
     }
+
     private void deleteMovieFromFavorites(String title) {
         long result = dbHelper.deleteMovie(title);
         if (result != -1) {

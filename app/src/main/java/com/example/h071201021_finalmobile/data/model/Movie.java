@@ -28,7 +28,10 @@ public class Movie implements Parcelable {
     @SerializedName("backdrop_path")
     private final String backdropUrl;
 
-    public Movie(int id, String overview, String posterPath, String releaseDate, String title, Double voteAverage, String backdropUrl) {
+    @SerializedName("type")
+    private final String type;
+
+    public Movie(int id, String overview, String posterPath, String releaseDate, String title, Double voteAverage, String backdropUrl, String type) {
         this.id = id;
         this.overview = overview;
         this.posterPath = posterPath;
@@ -36,6 +39,7 @@ public class Movie implements Parcelable {
         this.title = title;
         this.voteAverage = voteAverage;
         this.backdropUrl = backdropUrl;
+        this.type = type;
     }
 
     protected Movie(Parcel in) {
@@ -46,6 +50,7 @@ public class Movie implements Parcelable {
         releaseDate = in.readString();
         title = in.readString();
         voteAverage = in.readDouble();
+        type = in.readString();
     }
 
     @Override
@@ -57,6 +62,7 @@ public class Movie implements Parcelable {
         dest.writeString(releaseDate);
         dest.writeString(title);
         dest.writeDouble(voteAverage);
+        dest.writeString(type);
     }
 
     @Override
@@ -77,16 +83,14 @@ public class Movie implements Parcelable {
     };
 
     public int getId() {
-
         return id;
     }
 
     public String getBackdropUrl() {
-
         return backdropUrl;
     }
-    public String getOverview() {
 
+    public String getOverview() {
         return overview;
     }
 
@@ -95,18 +99,18 @@ public class Movie implements Parcelable {
     }
 
     public String getReleaseDate() {
-
         return releaseDate;
     }
 
     public String getTitle() {
-
         return title;
     }
 
     public Double getVoteAverage() {
-
         return voteAverage;
     }
-}
 
+    public String getType() {
+        return type;
+    }
+}

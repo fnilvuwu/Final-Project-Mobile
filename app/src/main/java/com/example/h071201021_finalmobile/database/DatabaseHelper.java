@@ -37,6 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(MovieContract.DatabaseEntry.COLUMN_BACKDROP_URL, movie.getBackdropUrl());
         values.put(MovieContract.DatabaseEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
         values.put(MovieContract.DatabaseEntry.COLUMN_GENRE_IDS, movie.getId());
+        values.put(MovieContract.DatabaseEntry.COLUMN_TYPE, movie.getType());
 
         return db.insert(MovieContract.DatabaseEntry.TABLE_NAME, null, values);
     }
@@ -51,7 +52,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 MovieContract.DatabaseEntry.COLUMN_POSTER_URL,
                 MovieContract.DatabaseEntry.COLUMN_BACKDROP_URL,
                 MovieContract.DatabaseEntry.COLUMN_VOTE_AVERAGE,
-                MovieContract.DatabaseEntry.COLUMN_GENRE_IDS
+                MovieContract.DatabaseEntry.COLUMN_GENRE_IDS,
+                MovieContract.DatabaseEntry.COLUMN_TYPE
         };
         return db.query(
                 MovieContract.DatabaseEntry.TABLE_NAME,
@@ -74,6 +76,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(MovieContract.DatabaseEntry.COLUMN_BACKDROP_URL, movie.getBackdropUrl());
         values.put(MovieContract.DatabaseEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
         values.put(MovieContract.DatabaseEntry.COLUMN_GENRE_IDS, movie.getId());
+        values.put(MovieContract.DatabaseEntry.COLUMN_TYPE, movie.getType());
 
         String selection = MovieContract.DatabaseEntry._ID + "=?";
         String[] selectionArgs = {String.valueOf(movie.getId())};
@@ -81,10 +84,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.update(MovieContract.DatabaseEntry.TABLE_NAME, values, selection, selectionArgs);
     }
 
-    public int deleteMovie(String nama) {
+    public int deleteMovie(String title) {
         SQLiteDatabase db = getWritableDatabase();
         String selection = MovieContract.DatabaseEntry.COLUMN_TITLE + "=?";
-        String[] selectionArgs = {String.valueOf(nama)};
+        String[] selectionArgs = {title};
 
         return db.delete(MovieContract.DatabaseEntry.TABLE_NAME, selection, selectionArgs);
     }
@@ -95,7 +98,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             String query = "SELECT * FROM " + MovieContract.DatabaseEntry.TABLE_NAME +
                     " WHERE " + MovieContract.DatabaseEntry.COLUMN_TITLE + " = ?";
-            String[] selectionArgs = {String.valueOf(movieTitle)};
+            String[] selectionArgs = {movieTitle};
             cursor = db.rawQuery(query, selectionArgs);
             if (cursor != null && cursor.getCount() > 0) {
                 return true;

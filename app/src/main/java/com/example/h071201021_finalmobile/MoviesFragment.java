@@ -59,8 +59,6 @@ public class MoviesFragment extends Fragment {
         tfSearch = view.findViewById(R.id.tf_search);
         sortIv = view.findViewById(R.id.sort_iv);
 
-
-
         showLoading();
 
         Retrofit retrofit = new Retrofit.Builder()

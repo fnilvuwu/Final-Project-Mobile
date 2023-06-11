@@ -106,6 +106,8 @@ public class FavoriteFragment extends Fragment {
             int posterUrlColumnIndex = cursor.getColumnIndex(MovieContract.DatabaseEntry.COLUMN_POSTER_URL);
             int backdropUrlColumnIndex = cursor.getColumnIndex(MovieContract.DatabaseEntry.COLUMN_BACKDROP_URL);
             int voteAverageColumnIndex = cursor.getColumnIndex(MovieContract.DatabaseEntry.COLUMN_VOTE_AVERAGE);
+            int typeColumnIndex = cursor.getColumnIndex(MovieContract.DatabaseEntry.COLUMN_TYPE);
+
 
             do {
                 int id = (idColumnIndex != -1) ? cursor.getInt(idColumnIndex) : -1;
@@ -115,9 +117,11 @@ public class FavoriteFragment extends Fragment {
                 String posterUrl = (posterUrlColumnIndex != -1) ? cursor.getString(posterUrlColumnIndex) : "-";
                 String backdropUrl = (backdropUrlColumnIndex != -1) ? cursor.getString(backdropUrlColumnIndex) : "-";
                 double voteAverage = (voteAverageColumnIndex != -1) ? cursor.getDouble(voteAverageColumnIndex) : 0.0;
+                String type = (typeColumnIndex != -1) ? cursor.getString(typeColumnIndex) : "-";
+
 
                 // Create a Movie object and add it to the list
-                Favorite favorite = new Favorite(id, overview, posterUrl, releaseDate, title, voteAverage, backdropUrl);
+                Favorite favorite = new Favorite(id, overview, posterUrl, releaseDate, title, voteAverage, backdropUrl, type);
                 favoriteList.add(favorite);
             } while (cursor.moveToNext());
 
